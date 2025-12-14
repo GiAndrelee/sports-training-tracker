@@ -19,6 +19,7 @@ A production-ready backend REST API for a **Sports Training Tracker** with JWT a
 - **Password Hashing**: bcryptjs
 - **Testing**: Jest & Supertest
 - **Logging**: Morgan
+- **Rate Limiting**: express-rate-limit
 
 ---
 
@@ -624,6 +625,7 @@ sports-training-tracker/
 - **Environment Variables**: Sensitive data stored in environment variables
 - **Input Validation**: Sequelize validates all model data
 - **Role-Based Access**: Endpoints protected with appropriate authorization checks
+- **Rate Limiting**: API is protected with rate limiting (100 requests per 15 minutes per IP)
 
 ---
 

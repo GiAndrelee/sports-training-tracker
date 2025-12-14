@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const morgan = require('morgan');
+const rateLimit = require('express-rate-limit');
 const { sequelize } = require('./models');
 const { errorHandler } = require('./middleware/errorHandler');
 
@@ -11,9 +12,19 @@ const goalRoutes = require('./routes/goals');
 
 const app = express();
 
+// Rate limiting middleware
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per windowMs
+  message: 'Too many requests from this IP, please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 // Core middleware
 app.use(express.json());
 app.use(morgan('dev'));
+app.use(limiter);
 
 // Custom logging middleware
 app.use((req, res, next) => {
