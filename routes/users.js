@@ -14,7 +14,7 @@ router.get('/', authenticate, authorize('admin'), asyncHandler(async (req, res) 
 
 // Get user by ID (authenticated users can view their own, admin can view all)
 router.get('/:id', authenticate, asyncHandler(async (req, res) => {
-  const userId = parseInt(req.params.id);
+  const userId = parseInt(req.params.id, 10);
   
   // Check if user is accessing their own data or is an admin
   if (req.user.id !== userId && req.user.role !== 'admin') {
@@ -34,7 +34,7 @@ router.get('/:id', authenticate, asyncHandler(async (req, res) => {
 
 // Update user (users can update their own, admin can update all)
 router.put('/:id', authenticate, asyncHandler(async (req, res) => {
-  const userId = parseInt(req.params.id);
+  const userId = parseInt(req.params.id, 10);
   
   // Check if user is updating their own data or is an admin
   if (req.user.id !== userId && req.user.role !== 'admin') {

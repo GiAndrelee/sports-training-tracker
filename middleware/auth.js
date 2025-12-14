@@ -1,7 +1,17 @@
 const jwt = require('jsonwebtoken');
 const { User } = require('../models');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+// JWT secret - must be set in environment variables for production
+const JWT_SECRET = process.env.JWT_SECRET;
+
+if (!JWT_SECRET) {
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('JWT_SECRET environment variable must be set in production');
+  }
+  console.warn('WARNING: JWT_SECRET not set. Using default value for development only.');
+}
+
+const SECRET = JWT_SECRET || 'your-secret-key-change-in-production';
 
 // Middleware to verify JWT token
 const authenticate = async (req, res, next) => {
@@ -14,7 +24,7 @@ const authenticate = async (req, res, next) => {
 
     const token = authHeader.substring(7);
     
-    const decoded = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(token, SECRET);
     
     const user = await User.findByPk(decoded.userId);
     
@@ -50,4 +60,4 @@ const authorize = (...roles) => {
   };
 };
 
-module.exports = { authenticate, authorize, JWT_SECRET };
+module.exports = { authenticate, authorize, JWT_SECRET: SECRET };
