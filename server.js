@@ -2,7 +2,9 @@ require('dotenv').config();
 const express = require('express');
 const morgan = require('morgan');
 const { sequelize } = require('./models');
+const { errorHandler } = require('./middleware/errorHandler');
 
+const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/users');
 const workoutRoutes = require('./routes/workouts');
 const goalRoutes = require('./routes/goals');
@@ -20,25 +22,20 @@ app.use((req, res, next) => {
 });
 
 // Routes
+app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/workouts', workoutRoutes);
 app.use('/api/goals', goalRoutes);
 
 // 404 handler
 app.use((req, res, next) => {
-  const err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
-
-// Error-handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  const status = err.status || 500;
-  res.status(status).json({
-    error: err.message || 'Internal Server Error'
+  res.status(404).json({
+    error: 'Not Found'
   });
 });
+
+// Centralized error-handling middleware
+app.use(errorHandler);
 
 // Export app for tests
 module.exports = app;
